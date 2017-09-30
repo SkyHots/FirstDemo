@@ -2,6 +2,7 @@
 
  一个简单的使用retrofit+rxjava+okhttp 请求网络数据的Demo  
  ### request example  
+ 
  ```java  
  Api.getInstance().service.getMsg(10, index)  
                 .subscribeOn(Schedulers.io())  
@@ -11,6 +12,7 @@
                         , throwable -> ToastUtil.showToast(MainActivity.this, "网络错误"));  
  ```  
  ### other example  
+ 
  ```java  
  wait...  
  ```
