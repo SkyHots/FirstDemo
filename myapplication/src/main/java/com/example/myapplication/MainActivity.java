@@ -97,12 +97,12 @@ public class MainActivity extends AppCompatActivity {
     private void setListener() {
         fab.setOnClickListener(v -> {
             soundPool.play(load, 1, 1, 1, 0, 0.5f);
-            listView.setSelection(0);
+            listView./*setSelection(0)*/smoothScrollToPosition(0);
         });
 
         listView.setOnLoadMoreListener(new LoadMoreListView.OnLoadMoreListener() {
             @Override
-            public void onloadMore() {
+            public void onLoadMore() {
                 loadMore();
             }
         });

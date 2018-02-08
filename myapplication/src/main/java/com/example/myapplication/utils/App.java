@@ -4,9 +4,6 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 
-/**
- * Created by baixiaokang on 16/4/23.
- */
 public class App extends Application {
 
     private static App mApp;

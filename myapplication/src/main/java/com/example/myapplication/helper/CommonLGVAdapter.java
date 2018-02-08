@@ -14,12 +14,12 @@ import java.util.List;
 
 public abstract class CommonLGVAdapter<T> extends BaseAdapter {
 
-    protected LayoutInflater mInflater;
-    protected Context mContext;
-    protected List<T> mDatas;
-    protected final int mItemLayoutId;
+    private LayoutInflater mInflater;
+    private Context mContext;
+    private List<T> mDatas;
+    private final int mItemLayoutId;
 
-    public CommonLGVAdapter(Context context, List<T> mDatas, int itemLayoutId) {
+    protected CommonLGVAdapter(Context context, List<T> mDatas, int itemLayoutId) {
         this.mContext = context;
         this.mInflater = LayoutInflater.from(mContext);
         this.mDatas = mDatas;

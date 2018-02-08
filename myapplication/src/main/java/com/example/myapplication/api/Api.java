@@ -34,10 +34,7 @@ public class Api {
     public ApiService service;
 
     public static Api getInstance() {
-        if (null != api) {
             return api;
-        }
-        return null;
     }
 
     Interceptor mInterceptor = (chain) -> chain.proceed(chain.request().newBuilder()

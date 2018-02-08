@@ -15,7 +15,6 @@ import com.example.myapplication.R;
 
 public class LoadMoreListView extends ListView implements AbsListView.OnScrollListener {
 
-    private Context mContext;
     private View mFootView;
     private int mTotalItemCount;
     private OnLoadMoreListener mLoadMoreListener;
@@ -37,8 +36,7 @@ public class LoadMoreListView extends ListView implements AbsListView.OnScrollLi
     }
 
     private void init(Context context) {
-        mContext = context;
-        mFootView = LayoutInflater.from(mContext).inflate(R.layout.footview, null);
+        mFootView = LayoutInflater.from(context).inflate(R.layout.footview, null);
         setOnScrollListener(this);
     }
 
@@ -52,7 +50,7 @@ public class LoadMoreListView extends ListView implements AbsListView.OnScrollLi
             mIsLoading = true;
             addFooterView(mFootView);
             if (mLoadMoreListener != null) {
-                mLoadMoreListener.onloadMore();
+                mLoadMoreListener.onLoadMore();
             }
         }
     }
@@ -72,6 +70,6 @@ public class LoadMoreListView extends ListView implements AbsListView.OnScrollLi
     }
 
     public interface OnLoadMoreListener {
-        void onloadMore();
+        void onLoadMore();
     }
 }

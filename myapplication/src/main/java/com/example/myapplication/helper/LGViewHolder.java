@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 /**
  * Created by DVO on 2017/7/21 0021.
@@ -136,8 +135,6 @@ public class LGViewHolder {
         Glide.with(context)
                 .load(url)
                 .thumbnail(0.2f)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .crossFade(500)
                 .into(((ImageView) getView(viewId)));
         return this;
     }

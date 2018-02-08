@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.myapplication.bean.Bean;
 import com.example.myapplication.utils.AlertDialogUtil;
 
@@ -118,8 +117,6 @@ public class ViewPagerActivity extends AppCompatActivity {
             Glide.with(mContext)
                     .load(imagePaths.get(position))
                     .thumbnail(0.2f)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .centerCrop()
                     .into(mHolder.imageView);
             container.addView(convertView);
             return convertView;
