@@ -14,8 +14,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -37,8 +35,6 @@ import butterknife.OnClick;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static com.example.myapplication.R.menu.main;
-
 public class MainActivity extends AppCompatActivity {
 
     private long firstTime = 0;
@@ -53,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Bean.ResultsBean> results;
     private int index = 1;
     private SoundPool soundPool;
-    private int load;
+    private int mSoundId;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -62,24 +58,23 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         soundPool = new SoundPool.Builder().build();
-        load = soundPool.load(this, R.raw.click, 1);
+        mSoundId = soundPool.load(this, R.raw.click, 1);
 
         StatusBarUtil.setColorNoTranslucent(this, Color.parseColor("#FF4081"));
-        ActionBar supportActionBar = getSupportActionBar();
-        //资源文件转换为Drawable  new ColorDrawable(id) 或者getResources.getDrawable(id)
-        supportActionBar.setBackgroundDrawable(getResources().getDrawable(R.color.colorAccent));
-        supportActionBar.setTitle("Surprise");
-        supportActionBar.show();
+        ActionBar bar = getSupportActionBar();
+        if (bar != null) {
+            bar.setBackgroundDrawable(getResources().getDrawable(R.color.colorAccent));
+            bar.setTitle("Surprise");
+            bar.show();
+        }
         ButterKnife.bind(this);
-
         initView();
-
         setListener();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(main, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
@@ -96,27 +91,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void setListener() {
         fab.setOnClickListener(v -> {
-            soundPool.play(load, 1, 1, 1, 0, 0.5f);
-            listView./*setSelection(0)*/smoothScrollToPosition(0);
+            soundPool.play(mSoundId, 1, 1, 1, 0, 0.5f);
+            listView.setSelection(0);
         });
 
-        listView.setOnLoadMoreListener(new LoadMoreListView.OnLoadMoreListener() {
-            @Override
-            public void onLoadMore() {
-                loadMore();
-            }
-        });
+        listView.setOnLoadMoreListener(this::loadMore);
 
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(MainActivity.this, ViewPagerActivity.class);
-                intent.putParcelableArrayListExtra("data", (ArrayList<? extends Parcelable>)
-                        results);
-                intent.putExtra("position", position);
-                startActivityForResult(intent, 1);
-                overridePendingTransition(R.anim.enter, R.anim.exit);
-            }
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            Intent intent = new Intent(MainActivity.this, ViewPagerActivity.class);
+            intent.putParcelableArrayListExtra("data", (ArrayList<? extends Parcelable>)
+                    results);
+            intent.putExtra("position", position);
+            startActivityForResult(intent, 1);
+            overridePendingTransition(R.anim.enter, R.anim.exit);
         });
     }
 
@@ -125,13 +112,13 @@ public class MainActivity extends AppCompatActivity {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(bean -> results = bean.getResults())
-                .subscribe(results -> setAdapter(results)
+                .subscribe(this::setAdapter
                         , throwable -> ToastUtil.showToast(MainActivity.this, "网络错误"));
         Api.getInstance().service.getMsg(10, index)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .map(bean -> results = bean.getResults())
-                .subscribe(results -> setAdapter(results)
+                .subscribe(this::setAdapter
                         , throwable -> ToastUtil.showToast(MainActivity.this, "网络错误"));
     }
 
@@ -160,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.btn)
     public void loadPic() {
-        soundPool.play(load, 1, 1, 1, 0, 1);
+        soundPool.play(mSoundId, 1, 1, 1, 0, 1);
         if (NetUtil.isNetConnected(this)) {
             if (listView.getAdapter() != null) {
                 listView.setSelection(0);

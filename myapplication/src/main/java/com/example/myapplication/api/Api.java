@@ -1,5 +1,7 @@
 package com.example.myapplication.api;
 
+import android.support.annotation.NonNull;
+
 import com.example.myapplication.utils.App;
 import com.example.myapplication.utils.NetUtil;
 import com.example.myapplication.utils.ToastUtil;
@@ -30,16 +32,11 @@ public class Api {
     private static final String BASE_URL = "http://gank.io/api/data/";
 
     private static Api api = new Api();
-    public final Retrofit retrofit;
     public ApiService service;
 
     public static Api getInstance() {
             return api;
     }
-
-    Interceptor mInterceptor = (chain) -> chain.proceed(chain.request().newBuilder()
-            .addHeader("Content-Type", "application/json")
-            .build());
 
     private Api() {
 
@@ -64,10 +61,13 @@ public class Api {
         File cacheFile = new File(App.getAppContext().getCacheDir(), "cache");
         Cache cache = new Cache(cacheFile, 1024 * 1024 * 100); //100Mb
 
+        Interceptor interceptor1 = (chain) -> chain.proceed(chain.request().newBuilder()
+                .addHeader("Content-Type", "application/json")
+                .build());
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .readTimeout(5, TimeUnit.SECONDS)
                 .connectTimeout(5, TimeUnit.SECONDS)
-                .addInterceptor(mInterceptor)
+                .addInterceptor(interceptor1)
                 .addInterceptor(interceptor)
                 .addNetworkInterceptor(new HttpCacheInterceptor())
                 .cache(cache)
@@ -76,7 +76,7 @@ public class Api {
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").serializeNulls()
                 .create();
 
-        retrofit = new Retrofit.Builder()
+        Retrofit retrofit = new Retrofit.Builder()
                 .client(okHttpClient)
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
@@ -88,7 +88,7 @@ public class Api {
     class HttpCacheInterceptor implements Interceptor {
 
         @Override
-        public Response intercept(Chain chain) throws IOException {
+        public Response intercept(@NonNull Chain chain) throws IOException {
             Request request = chain.request();
             if (!NetUtil.isNetConnected(App.getAppContext())) {
                 request = request.newBuilder()
