@@ -6,48 +6,44 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="5dp"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp"
     tools:context="com.example.myapplication.MainActivity">
 
-    <Button
-        android:id="@+id/btn"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/get"
-        android:textColor="@android:color/holo_orange_dark"
-        android:textAllCaps="false"/>
-
-    <FrameLayout
-        android:layout_below="@id/btn"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#AA39ADFF"
+            android:clipToPadding="true"
+            app:popupTheme="@style/ToolbarPopupTheme"
+            app:title="Main"
+            app:titleTextColor="@color/colorWhite">
+        </android.support.v7.widget.Toolbar>
+
         <com.example.myapplication.helper.LoadMoreListView
+            android:layout_below="@id/toolbar"
+            android:clipToPadding="true"
             android:id="@+id/listView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@android:color/darker_gray"
             android:dividerHeight=".5dp"
-            android:layoutAnimation="@anim/anim_lv_item"
-            android:scrollbarStyle="outsideOverlay"
-            android:scrollbarThumbVertical="@drawable/scrollbar">
+            android:layoutAnimation="@anim/anim_lv_item">
         </com.example.myapplication.helper.LoadMoreListView>
 
-    </FrameLayout>
-
+    </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:alpha="0.5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="15dp"
         android:layout_marginRight="15dp"
-        android:src="@mipmap/top"
-        app:backgroundTint="@color/colorAccent"
-        app:elevation="0dp"/>
+        android:src="@mipmap/top"/>
 </RelativeLayout>

@@ -138,7 +138,7 @@ public class MyMediaPlayerService extends Service {
 
     class MyMediaPlayerServiceInner extends Binder {
 
-        public MyMediaPlayerService getService() {
+        MyMediaPlayerService getService() {
             return MyMediaPlayerService.this;
         }
     }

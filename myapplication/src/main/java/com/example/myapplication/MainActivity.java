@@ -1,28 +1,23 @@
 package com.example.myapplication;
 
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.AudioManager;
 import android.media.SoundPool;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.Toast;
+import android.view.View;
 
 import com.example.myapplication.api.Api;
 import com.example.myapplication.bean.Bean;
 import com.example.myapplication.helper.CommonLGVAdapter;
 import com.example.myapplication.helper.LGViewHolder;
 import com.example.myapplication.helper.LoadMoreListView;
-import com.example.myapplication.utils.NetUtil;
 import com.example.myapplication.utils.StatusBarUtil;
 import com.example.myapplication.utils.ToastUtil;
 
@@ -41,33 +36,30 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.listView)
     LoadMoreListView listView;
-    @BindView(R.id.btn)
-    Button btn;
-    @BindView(R.id.fab)
-    FloatingActionButton fab;
+    @BindView(R.id.toolbar)
+    Toolbar mToolbar;
 
     private List<Bean.ResultsBean> results;
     private int index = 1;
-    private SoundPool soundPool;
+    private SoundPool mSoundPool;
     private int mSoundId;
+    private CommonLGVAdapter<Bean.ResultsBean> mAdapter;
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    private float mFirstY, mCurrentY, mLastDeltaY;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        soundPool = new SoundPool.Builder().build();
-        mSoundId = soundPool.load(this, R.raw.click, 1);
-
-        StatusBarUtil.setColorNoTranslucent(this, Color.parseColor("#FF4081"));
-        ActionBar bar = getSupportActionBar();
-        if (bar != null) {
-            bar.setBackgroundDrawable(getResources().getDrawable(R.color.colorAccent));
-            bar.setTitle("Surprise");
-            bar.show();
-        }
         ButterKnife.bind(this);
+
+        mSoundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+        //        mSoundPool = new SoundPool.Builder().build();   Api 21
+        mSoundId = mSoundPool.load(this, R.raw.click, 1);
+
+        StatusBarUtil.setColorNoTranslucent(this, Color.parseColor("#454545"));
+        setSupportActionBar(mToolbar);
         initView();
         setListener();
     }
@@ -90,17 +82,45 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setListener() {
-        fab.setOnClickListener(v -> {
-            soundPool.play(mSoundId, 1, 1, 1, 0, 0.5f);
-            listView.setSelection(0);
-        });
+
+       /* listView.setOnTouchListener((v, event) -> {
+            final float y = event.getY();
+            float translationY = mToolbar.getTranslationY();
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    mFirstY = y;
+                    mCurrentY = mFirstY;
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    float mDeltaY = y - mCurrentY;
+                    float newTansY = translationY + mDeltaY;
+                    if (newTansY <= 0 && newTansY >= -mToolbar.getHeight()) {
+                        mToolbar.setTranslationY(newTansY);
+                    }
+                    mCurrentY = y;
+                    mLastDeltaY = mDeltaY;
+                    break;
+                case MotionEvent.ACTION_UP:
+                    ObjectAnimator animator = null;
+                    if (mLastDeltaY < 0) {
+                        animator = ObjectAnimator.ofFloat(mToolbar, "translationY", mToolbar.getTranslationY(), -mToolbar
+                        .getHeight());
+                    } else {
+                        animator = ObjectAnimator.ofFloat(mToolbar, "translationY", mToolbar.getTranslationY(), 0);
+                    }
+                    animator.setDuration(100);
+                    animator.setInterpolator(AnimationUtils.loadInterpolator(MainActivity.this, android.R.interpolator.linear));
+                    animator.start();
+                    break;
+            }
+            return false;
+        });*/
 
         listView.setOnLoadMoreListener(this::loadMore);
 
         listView.setOnItemClickListener((parent, view, position, id) -> {
             Intent intent = new Intent(MainActivity.this, ViewPagerActivity.class);
-            intent.putParcelableArrayListExtra("data", (ArrayList<? extends Parcelable>)
-                    results);
+            intent.putParcelableArrayListExtra("data", (ArrayList<? extends Parcelable>) results);
             intent.putExtra("position", position);
             startActivityForResult(intent, 1);
             overridePendingTransition(R.anim.enter, R.anim.exit);
@@ -108,12 +128,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        Api.getInstance().service.getMsg(10, index)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .map(bean -> results = bean.getResults())
-                .subscribe(this::setAdapter
-                        , throwable -> ToastUtil.showToast(MainActivity.this, "网络错误"));
+        /*View header = new View(this);
+        header.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT, mToolbar.getHeight()));
+        listView.addHeaderView(header);*/
+
         Api.getInstance().service.getMsg(10, index)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -123,41 +141,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setAdapter(List<Bean.ResultsBean> results) {
-
-        listView.setAdapter(new CommonLGVAdapter<Bean.ResultsBean>(MainActivity.this, results,
-                R.layout.listview_adapter) {
+        mAdapter = new CommonLGVAdapter<Bean.ResultsBean>(this, results, R.layout.listview_adapter) {
             @Override
             public void convert(final LGViewHolder helper, Bean.ResultsBean item) {
                 helper.setImageByUrl(R.id.item_image, item.getUrl());
                 helper.setText(R.id.item_text, item.getCreatedAt());
             }
-        });
+        };
+        listView.setAdapter(mAdapter);
     }
 
     private void loadMore() {
-        new Handler().postDelayed(() ->
-                Api.getInstance().service.getMsg(10, ++index)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(bean -> {
-                            results.addAll(bean.getResults());
-                            listView.setLoadCompleted();
-                        }), 1500);
+        Api.getInstance().service.getMsg(10, ++index)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(bean -> {
+                    results.addAll(bean.getResults());
+                    mAdapter.notifyDataSetChanged();
+                    listView.setLoadCompleted();
+                });
     }
 
-    @OnClick(R.id.btn)
-    public void loadPic() {
-        soundPool.play(mSoundId, 1, 1, 1, 0, 1);
-        if (NetUtil.isNetConnected(this)) {
-            if (listView.getAdapter() != null) {
+    @OnClick({R.id.fab})
+    public void loadPic(View view) {
+        switch (view.getId()) {
+            case R.id.fab:
+                mSoundPool.play(mSoundId, 1, 1, 1, 0, 0.5f);
                 listView.setSelection(0);
-            } else {
-                initView();
-            }
-        } else {
-            Toast.makeText(this, "当前无网络连接", Toast.LENGTH_SHORT).show();
-            //            listView.setAdapter(null);
+                break;
         }
+
     }
 
 
@@ -178,6 +191,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        mSoundPool.release();
         ButterKnife.bind(this).unbind();
     }
 }

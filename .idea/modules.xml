@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://C:\Users\DVO\Desktop\FirstDemo.git\trunk\FirstDemo.iml" filepath="C:\Users\DVO\Desktop\FirstDemo.git\trunk\FirstDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/myapplication/myapplication.iml" filepath="$PROJECT_DIR$/myapplication/myapplication.iml" />
-      <module fileurl="file://C:\Users\DVO\Desktop\FirstDemo.git\trunk\myapplication\myapplication.iml" filepath="C:\Users\DVO\Desktop\FirstDemo.git\trunk\myapplication\myapplication.iml" />
       <module fileurl="file://$PROJECT_DIR$/trunk.iml" filepath="$PROJECT_DIR$/trunk.iml" />
     </modules>
   </component>

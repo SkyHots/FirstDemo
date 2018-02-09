@@ -72,4 +72,11 @@ public class LoadMoreListView extends ListView implements AbsListView.OnScrollLi
     public interface OnLoadMoreListener {
         void onLoadMore();
     }
+
+    /*@Override
+    protected boolean overScrollBy(int deltaX, int deltaY, int scrollX, int scrollY, int scrollRangeX, int scrollRangeY, int
+            maxOverScrollX, int maxOverScrollY, boolean isTouchEvent) {
+        return super.overScrollBy(deltaX, deltaY, scrollX, scrollY, scrollRangeX, scrollRangeY, maxOverScrollX, *//*maxOverScrollY*//*400,
+                isTouchEvent);
+    }*/
 }

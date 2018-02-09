@@ -3,8 +3,10 @@ package com.example.myapplication;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +15,6 @@ import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.example.myapplication.bean.Bean;
-import com.example.myapplication.utils.AlertDialogUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -90,25 +91,17 @@ public class ViewPagerActivity extends AppCompatActivity {
             if (mViewCache.size() == 0) {
                 mHolder = new ViewHolder();
                 convertView = mLayoutInflater.inflate(R.layout.item, null, false);
-                mHolder.imageView = (ImageView) convertView.findViewById(R.id.larageImage);
-                mHolder.imageView.setOnLongClickListener(new View.OnLongClickListener() {
-                    @Override
-                    public boolean onLongClick(View v) {
-                        AlertDialogUtil.showAlertDialog(ViewPagerActivity.this, R.mipmap.save,
-                                "保存图片", "你要保存照片吗？", "确定", "取消", true, new AlertDialogUtil
-                                        .DialogClickListener() {
-                                    @Override
-                                    public void clickPositive() {
-                                        saveToSDCard(position);
-                                    }
-                                    @Override
-                                    public void clickNegative() {
-
-                                    }
-                                });
-                        return true;
-                    }
+                mHolder.imageView = convertView.findViewById(R.id.larageImage);
+                mHolder.imageView.setOnLongClickListener(v -> {
+                    new AlertDialog.Builder(ViewPagerActivity.this)
+                            .setTitle("保存图片")
+                            .setMessage("你要保存照片吗？")
+                            .setPositiveButton("确定", (dialog, which) -> saveToSDCard(position))
+                            .setNegativeButton("取消", null)
+                            .create().show();
+                    return true;
                 });
+                mHolder.imageView.setOnClickListener(v -> ViewPagerActivity.this.onBackPressed());
                 convertView.setTag(mHolder);
             } else {
                 convertView = mViewCache.removeFirst();
@@ -153,6 +146,7 @@ public class ViewPagerActivity extends AppCompatActivity {
 
     /**
      * 保存到手机更目录
+     *
      * @param pos
      */
     private void saveToSDCard(int pos) {
@@ -162,12 +156,12 @@ public class ViewPagerActivity extends AppCompatActivity {
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onFailure(@NonNull Call call, @NonNull IOException e) {
 
             }
 
             @Override
-            public void onResponse(Call call, final Response response) throws IOException {
+            public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
 
                 File file = new File(Environment.getExternalStorageDirectory()
                         .getAbsolutePath() + File.separator + System
@@ -183,14 +177,9 @@ public class ViewPagerActivity extends AppCompatActivity {
                     bos.write(buf, 0, len);
                     bos.flush();
                 }
-                if (in != null) {
-                    in.close();
-                }
-                if (bos != null) {
-                    bos.close();
-                }
+                in.close();
+                bos.close();
             }
-
         });
     }
 
