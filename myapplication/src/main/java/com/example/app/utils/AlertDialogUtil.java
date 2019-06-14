@@ -1,4 +1,4 @@
-package com.example.myapplication.utils;
+package com.example.app.utils;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.myapplication.R;
+import com.example.app.R;
 
 /**
  * Created by DVO on 2017/7/19 0014.

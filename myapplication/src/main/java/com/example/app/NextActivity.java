@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.app;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -21,7 +21,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.myapplication.bean.MusicObject;
+import com.example.app.bean.MusicObject;
 
 import java.io.File;
 import java.io.FileFilter;

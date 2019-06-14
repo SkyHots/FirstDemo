@@ -1,9 +1,16 @@
-package com.example.myapplication;
+package com.example.app;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
@@ -14,7 +21,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.example.myapplication.bean.Bean;
+import com.example.app.bean.Bean;
+import com.example.app.utils.ToastUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -43,6 +51,7 @@ public class ViewPagerActivity extends AppCompatActivity {
     private ArrayList<Bean.ResultsBean> data;
     private List<String> imagePaths;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +60,11 @@ public class ViewPagerActivity extends AppCompatActivity {
 
         initData();
         initView();
+
+        int i = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (i == PackageManager.PERMISSION_DENIED) {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1001);
+        }
     }
 
     private void initData() {
@@ -147,10 +161,10 @@ public class ViewPagerActivity extends AppCompatActivity {
     /**
      * 保存到手机更目录
      *
-     * @param pos
+     * @param position
      */
-    private void saveToSDCard(int pos) {
-        String url = imagePaths.get(pos);
+    private void saveToSDCard(int position) {
+        String url = imagePaths.get(position);
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
         Call call = client.newCall(request);
@@ -164,21 +178,25 @@ public class ViewPagerActivity extends AppCompatActivity {
             public void onResponse(@NonNull Call call, @NonNull final Response response) throws IOException {
 
                 File file = new File(Environment.getExternalStorageDirectory()
-                        .getAbsolutePath() + File.separator + System
-                        .currentTimeMillis() + ".jpg");
+                        .getAbsolutePath() + File.separator + url.substring(url.length() - 8));
                 if (!file.exists()) {
-                    file.createNewFile();
+                    boolean newFile = file.createNewFile();
+                    InputStream in = response.body().byteStream();
+                    BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+                    byte[] buf = new byte[1024 * 8];
+                    int len = 0;
+                    while ((len = in.read(buf)) != -1) {
+                        bos.write(buf, 0, len);
+                        bos.flush();
+                    }
+                    in.close();
+                    bos.close();
+                    // 最后通知图库更新
+                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(file)));
+                    runOnUiThread(() -> ToastUtil.showToast(ViewPagerActivity.this, "保存成功"));
+                } else {
+                    runOnUiThread(() -> ToastUtil.showToast(ViewPagerActivity.this, "文件已存在"));
                 }
-                InputStream in = response.body().byteStream();
-                BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
-                byte[] buf = new byte[1024 * 8];
-                int len = 0;
-                while ((len = in.read(buf)) != -1) {
-                    bos.write(buf, 0, len);
-                    bos.flush();
-                }
-                in.close();
-                bos.close();
             }
         });
     }

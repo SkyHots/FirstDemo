@@ -1,4 +1,4 @@
-package com.example.myapplication.bean;
+package com.example.app.bean;
 
 import java.io.File;
 import java.io.Serializable;

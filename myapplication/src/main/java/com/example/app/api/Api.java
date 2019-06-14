@@ -1,10 +1,10 @@
-package com.example.myapplication.api;
+package com.example.app.api;
 
 import android.support.annotation.NonNull;
 
-import com.example.myapplication.utils.App;
-import com.example.myapplication.utils.NetUtil;
-import com.example.myapplication.utils.ToastUtil;
+import com.example.app.utils.App;
+import com.example.app.utils.NetUtil;
+import com.example.app.utils.ToastUtil;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 

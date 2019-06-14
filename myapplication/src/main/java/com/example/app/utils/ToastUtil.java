@@ -1,4 +1,4 @@
-package com.example.myapplication.utils;
+package com.example.app.utils;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.myapplication.R;
+import com.example.app.R;
 
 
 public class ToastUtil {

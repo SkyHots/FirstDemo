@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.app;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -9,7 +9,7 @@ import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
 
-import com.example.myapplication.bean.MusicObject;
+import com.example.app.bean.MusicObject;
 
 import java.io.File;
 import java.io.IOException;

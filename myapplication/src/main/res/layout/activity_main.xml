@@ -6,7 +6,7 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.myapplication.MainActivity">
+    tools:context="com.example.app.MainActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -16,34 +16,32 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#AA39ADFF"
+            android:background="#C0E2FC"
             android:clipToPadding="true"
             app:popupTheme="@style/ToolbarPopupTheme"
             app:title="Main"
             app:titleTextColor="@color/colorWhite">
         </android.support.v7.widget.Toolbar>
 
-        <com.example.myapplication.helper.LoadMoreListView
-            android:layout_below="@id/toolbar"
-            android:clipToPadding="true"
-            android:id="@+id/listView"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="@android:color/darker_gray"
-            android:dividerHeight=".5dp"
+            android:layout_below="@id/toolbar"
+            android:clipToPadding="true"
             android:layoutAnimation="@anim/anim_lv_item">
-        </com.example.myapplication.helper.LoadMoreListView>
+        </android.support.v7.widget.RecyclerView>
 
     </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
-        android:alpha="0.5"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="15dp"
+        android:layout_alignParentBottom="true"
         android:layout_marginRight="15dp"
+        android:layout_marginBottom="15dp"
+        android:alpha="0.2"
         android:src="@mipmap/top"/>
 </RelativeLayout>

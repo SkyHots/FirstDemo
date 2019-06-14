@@ -1,4 +1,4 @@
-package com.example.myapplication.bean;
+package com.example.app.bean;
 
 import android.os.Parcel;
 import android.os.Parcelable;

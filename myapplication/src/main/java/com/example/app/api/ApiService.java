@@ -1,6 +1,6 @@
-package com.example.myapplication.api;
+package com.example.app.api;
 
-import com.example.myapplication.bean.Bean;
+import com.example.app.bean.Bean;
 
 import retrofit2.http.GET;
 import retrofit2.http.Path;

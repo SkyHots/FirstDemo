@@ -1,4 +1,4 @@
-package com.example.myapplication.utils;
+package com.example.app.utils;
 
 import android.app.Application;
 import android.content.Context;
