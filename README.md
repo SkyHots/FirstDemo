@@ -11,11 +11,7 @@
                 .subscribe(results -> setAdapter(results)  
                         , throwable -> ToastUtil.showToast(MainActivity.this, "网络错误"));  
  ```  
- ### other example  
- 
- ```java  
- wait...  
- ```
+ ### gank.io接口不可用了，demo跑不起来了。。
         
         
 
